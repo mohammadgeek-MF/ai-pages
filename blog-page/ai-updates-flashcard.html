@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Briefing — April 2026 · Flashcard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS ─────────────────────────────────────────────── */
+:root {
+  --gold:      #d4af37;
+  --gold-dim:  #b8962e;
+  --gold-pale: #e8d47a;
+  --cream:     #f5ead2;
+}
+[data-theme="dark"] {
+  --bg:        #0d0d08;
+  --bg2:       #141410;
+  --bg3:       #1c1c15;
+  --surface:   #181812;
+  --border:    rgba(212,175,55,.18);
+  --text:      #e8dfc8;
+  --text-dim:  #9b9077;
+  --text-head: #faf6ed;
+  --glow:      rgba(212,175,55,.35);
+}
+[data-theme="light"] {
+  --bg:        #faf6ed;
+  --bg2:       #f3eddf;
+  --bg3:       #ede4cf;
+  --surface:   #f7f1e4;
+  --border:    rgba(140,105,20,.22);
+  --text:      #2c2818;
+  --text-dim:  #7a6e52;
+  --text-head: #0d0d08;
+  --glow:      rgba(212,175,55,.25);
+}
+
+/* ── RESET ──────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Crimson Pro',Georgia,serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:2rem 1rem 3rem;
+  position:relative;
+  overflow-x:hidden;
+  transition:background .4s,color .4s;
+}
+
+/* ── GRAIN OVERLAY ──────────────────────────────────────── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity:.028;
+  pointer-events:none;
+  z-index:999;
+}
+
+/* ── STAR FIELD ─────────────────────────────────────────── */
+#stars{
+  position:fixed;inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+.star{
+  position:absolute;
+  border-radius:50%;
+  background:#fff;
+  animation:twinkle var(--dur,3s) ease-in-out infinite;
+  animation-delay:var(--delay,0s);
+  opacity:0;
+}
+[data-theme="light"] .star{background:#a08020;}
+@keyframes twinkle{
+  0%,100%{opacity:0;transform:scale(.6)}
+  50%{opacity:var(--peak,.7);transform:scale(1)}
+}
+
+/* ── TOGGLE ─────────────────────────────────────────────── */
+.toggle-bar{
+  position:fixed;top:1.4rem;right:1.6rem;
+  z-index:100;
+  display:flex;align-items:center;gap:.6rem;
+}
+.toggle-label{
+  font-family:'Crimson Pro',serif;
+  font-size:.82rem;letter-spacing:.08em;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  transition:color .3s;
+}
+.toggle-btn{
+  width:46px;height:24px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--bg3);
+  cursor:pointer;
+  position:relative;
+  transition:background .3s,border-color .3s;
+  flex-shrink:0;
+}
+.toggle-btn::after{
+  content:'';
+  position:absolute;top:3px;left:3px;
+  width:16px;height:16px;
+  border-radius:50%;
+  background:var(--gold);
+  transition:transform .3s,box-shadow .3s;
+  box-shadow:0 0 6px var(--glow);
+}
+[data-theme="light"] .toggle-btn::after{transform:translateX(22px);}
+
+/* ── SCENE WRAPPER ──────────────────────────────────────── */
+.scene{
+  position:relative;z-index:10;
+  width:100%;max-width:680px;
+}
+
+/* ── CARD ───────────────────────────────────────────────── */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:2px;
+  overflow:hidden;
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 24px 80px rgba(0,0,0,.45),
+    0 0 60px var(--glow),
+    inset 0 1px 0 rgba(212,175,55,.08);
+  opacity:0;
+  transform:translateY(32px);
+  animation:fadeUp .9s ease forwards;
+  animation-delay:.2s;
+  transition:box-shadow .4s,border-color .4s;
+}
+.card:hover{
+  box-shadow:
+    0 0 0 1px rgba(212,175,55,.35),
+    0 32px 100px rgba(0,0,0,.55),
+    0 0 90px rgba(212,175,55,.28),
+    inset 0 1px 0 rgba(212,175,55,.14);
+}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+/* ── VISUAL HEADER ──────────────────────────────────────── */
+.card-visual{
+  position:relative;
+  height:280px;
+  background:linear-gradient(135deg,#0a0a06 0%,#111108 40%,#0f0f0a 100%);
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+[data-theme="light"] .card-visual{
+  background:linear-gradient(135deg,#ede4cf 0%,#e5d9b6 40%,#ddd2a8 100%);
+}
+
+/* Orbital rings */
+.orb-ring{
+  position:absolute;
+  border-radius:50%;
+  border:1px solid rgba(212,175,55,.14);
+  animation:spin linear infinite;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+}
+.orb-ring.r1{width:340px;height:340px;animation-duration:32s;}
+.orb-ring.r2{width:240px;height:240px;animation-duration:22s;animation-direction:reverse;border-color:rgba(212,175,55,.09);}
+.orb-ring.r3{width:160px;height:160px;animation-duration:14s;border-color:rgba(212,175,55,.18);}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+/* Orbital dots */
+.orb-ring::before,.orb-ring::after{
+  content:'';
+  position:absolute;
+  width:5px;height:5px;
+  background:var(--gold);
+  border-radius:50%;
+  box-shadow:0 0 8px 2px var(--gold);
+}
+.orb-ring.r1::before{top:-2.5px;left:50%;}
+.orb-ring.r1::after{bottom:-2.5px;left:50%;}
+.orb-ring.r2::before{top:-2.5px;left:50%;}
+.orb-ring.r3::before{right:-2.5px;top:50%;}
+
+/* Central glow */
+.core-glow{
+  position:absolute;
+  width:90px;height:90px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(212,175,55,.22) 0%,transparent 72%);
+  animation:pulse 3s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.2);opacity:1}}
+
+/* Visual label */
+.visual-label{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  padding:1.6rem 2rem 1.2rem;
+  background:linear-gradient(to top,rgba(13,13,8,.97) 0%,transparent 100%);
+  display:flex;align-items:flex-end;justify-content:space-between;
+}
+[data-theme="light"] .visual-label{
+  background:linear-gradient(to top,rgba(245,234,210,.97) 0%,transparent 100%);
+}
+.visual-tag{
+  font-family:'Crimson Pro',serif;
+  font-size:.75rem;letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:1px solid rgba(212,175,55,.28);
+  padding:.22em .8em;
+  border-radius:1px;
+}
+.visual-date{
+  font-family:'Crimson Pro',serif;
+  font-size:.78rem;letter-spacing:.1em;
+  color:var(--text-dim);
+}
+
+/* Floating AI icons */
+.ai-logos{
+  position:absolute;inset:0;
+  pointer-events:none;
+}
+.ai-dot{
+  position:absolute;
+  font-size:.9rem;
+  opacity:.6;
+  animation:floatDot var(--fd,8s) ease-in-out infinite;
+  animation-delay:var(--fd-d,0s);
+}
+@keyframes floatDot{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-10px) scale(1.1)}
+}
+
+/* ── BODY CONTENT ───────────────────────────────────────── */
+.card-body{
+  padding:2rem 2.2rem 1.8rem;
+}
+
+/* Kicker */
+.kicker{
+  font-family:'Crimson Pro',serif;
+  font-size:.72rem;letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--gold);
+  display:flex;align-items:center;gap:.6rem;
+  margin-bottom:1rem;
+  opacity:0;
+  animation:fadeUp .7s ease forwards .5s;
+}
+.kicker::before,.kicker::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(to right,transparent,rgba(212,175,55,.3),transparent);
+}
+.kicker::before{flex:0 0 24px;}
+.kicker::after{flex:1;}
+
+/* Heading */
+.card-title{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:2.05rem;
+  font-weight:600;
+  line-height:1.18;
+  letter-spacing:-.01em;
+  color:var(--text-head);
+  margin-bottom:.7rem;
+  position:relative;
+  opacity:0;
+  animation:fadeUp .7s ease forwards .65s;
+  background:linear-gradient(135deg,var(--text-head) 0%,var(--gold-pale) 50%,var(--text-head) 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:fadeUp .7s ease forwards .65s, shimmer 5s linear infinite .65s;
+}
+@keyframes shimmer{
+  0%{background-position:200% center}
+  100%{background-position:-200% center}
+}
+
+/* Subtitle */
+.card-sub{
+  font-family:'Crimson Pro',serif;
+  font-size:1.05rem;
+  color:var(--text-dim);
+  font-style:italic;
+  margin-bottom:1.4rem;
+  opacity:0;
+  animation:fadeUp .7s ease forwards .78s;
+}
+
+/* Divider */
+.divider{
+  height:1px;
+  background:linear-gradient(to right,transparent,var(--border),transparent);
+  margin:1.4rem 0;
+  opacity:0;
+  animation:fadeUp .7s ease forwards .88s;
+}
+
+/* Description */
+.card-desc{
+  font-size:1.05rem;
+  line-height:1.72;
+  color:var(--text);
+  margin-bottom:1.5rem;
+  opacity:0;
+  animation:fadeUp .7s ease forwards .96s;
+}
+.card-desc strong{
+  color:var(--gold);
+  font-weight:600;
+}
+
+/* Player pills */
+.players{
+  display:flex;flex-wrap:wrap;gap:.5rem;
+  margin-bottom:1.5rem;
+  opacity:0;
+  animation:fadeUp .7s ease forwards 1.1s;
+}
+.pill{
+  font-family:'Crimson Pro',serif;
+  font-size:.78rem;
+  letter-spacing:.06em;
+  padding:.25em .9em;
+  border:1px solid var(--border);
+  border-radius:1px;
+  color:var(--text-dim);
+  background:var(--bg3);
+  transition:border-color .25s,color .25s,background .25s;
+  display:flex;align-items:center;gap:.35em;
+}
+.pill:hover{
+  border-color:rgba(212,175,55,.5);
+  color:var(--gold);
+  background:rgba(212,175,55,.06);
+}
+.pill span{font-size:.9em;}
+
+/* Stat row */
+.stats{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:.8rem;
+  margin-bottom:1.5rem;
+  opacity:0;
+  animation:fadeUp .7s ease forwards 1.22s;
+}
+.stat{
+  text-align:center;
+  padding:.8rem .5rem;
+  border:1px solid var(--border);
+  border-radius:1px;
+  background:var(--bg2);
+  transition:border-color .3s,background .3s;
+}
+.stat:hover{
+  border-color:rgba(212,175,55,.35);
+  background:rgba(212,175,55,.04);
+}
+.stat-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.5rem;font-weight:600;
+  color:var(--gold);
+  line-height:1;
+  margin-bottom:.25rem;
+  background:linear-gradient(135deg,var(--gold-dim),var(--gold-pale),var(--gold));
+  background-size:200%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 4s linear infinite;
+}
+.stat-label{
+  font-size:.7rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text-dim);
+}
+
+/* Themes */
+.themes{
+  display:flex;flex-direction:column;gap:.5rem;
+  margin-bottom:1.8rem;
+  opacity:0;
+  animation:fadeUp .7s ease forwards 1.34s;
+}
+.theme-item{
+  display:flex;align-items:flex-start;gap:.7rem;
+  padding:.55rem .8rem;
+  border-left:2px solid rgba(212,175,55,.25);
+  background:var(--bg2);
+  transition:border-color .25s,background .25s;
+}
+.theme-item:hover{border-color:var(--gold);background:rgba(212,175,55,.04);}
+.theme-icon{font-size:.95rem;flex-shrink:0;margin-top:.05em;}
+.theme-text{
+  font-size:.92rem;line-height:1.5;color:var(--text);
+}
+.theme-text strong{color:var(--text-head);font-weight:600;}
+
+/* CTA */
+.cta-row{
+  display:flex;align-items:center;justify-content:space-between;
+  opacity:0;
+  animation:fadeUp .7s ease forwards 1.46s;
+}
+.cta-btn{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.95rem;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--bg);
+  background:linear-gradient(135deg,var(--gold-dim),var(--gold),var(--gold-pale));
+  background-size:200%;
+  padding:.7em 2em;
+  border:none;border-radius:1px;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;align-items:center;gap:.5em;
+  transition:background-position .4s,box-shadow .3s,transform .2s;
+  box-shadow:0 4px 20px rgba(212,175,55,.25);
+  animation:shimmer 3s linear infinite;
+}
+.cta-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 30px rgba(212,175,55,.4);
+}
+.cta-hint{
+  font-family:'Crimson Pro',serif;
+  font-size:.78rem;font-style:italic;
+  color:var(--text-dim);letter-spacing:.05em;
+}
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+footer{
+  margin-top:2.2rem;
+  text-align:center;
+  opacity:0;
+  animation:fadeUp .7s ease forwards 1.6s;
+  position:relative;z-index:10;
+}
+.footer-rule{
+  display:flex;align-items:center;gap:1rem;
+  justify-content:center;margin-bottom:.9rem;
+}
+.footer-rule::before,.footer-rule::after{
+  content:'';width:60px;height:1px;
+  background:linear-gradient(to right,transparent,rgba(212,175,55,.3));
+}
+.footer-rule::after{background:linear-gradient(to left,transparent,rgba(212,175,55,.3));}
+.footer-diamond{
+  width:6px;height:6px;
+  background:var(--gold);
+  transform:rotate(45deg);
+  opacity:.6;
+}
+.footer-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1rem;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);
+}
+.footer-role{
+  font-family:'Crimson Pro',serif;
+  font-size:.78rem;font-style:italic;
+  color:var(--text-dim);letter-spacing:.08em;
+  margin-top:.15rem;
+}
+</style>
+</head>
+<body>
+
+<!-- Star field -->
+<div id="stars"></div>
+
+<!-- Toggle -->
+<div class="toggle-bar">
+  <span class="toggle-label" id="mode-label">Dark</span>
+  <div class="toggle-btn" id="theme-toggle" role="button" aria-label="Toggle theme" tabindex="0"></div>
+</div>
+
+<!-- Card -->
+<div class="scene">
+  <div class="card">
+
+    <!-- Visual Header -->
+    <div class="card-visual">
+      <div class="orb-ring r1"></div>
+      <div class="orb-ring r2"></div>
+      <div class="orb-ring r3"></div>
+      <div class="core-glow"></div>
+      <div class="ai-logos">
+        <div class="ai-dot" style="top:18%;left:14%;--fd:9s;--fd-d:0s">🤖</div>
+        <div class="ai-dot" style="top:22%;right:13%;--fd:7s;--fd-d:.8s">⚡</div>
+        <div class="ai-dot" style="bottom:28%;left:10%;--fd:11s;--fd-d:1.4s">💎</div>
+        <div class="ai-dot" style="bottom:22%;right:10%;--fd:8s;--fd-d:.3s">🦙</div>
+        <div class="ai-dot" style="top:42%;left:6%;--fd:10s;--fd-d:2s">✕</div>
+        <div class="ai-dot" style="top:38%;right:7%;--fd:9s;--fd-d:1.1s">🪟</div>
+        <div class="ai-dot" style="top:12%;left:44%;--fd:12s;--fd-d:.6s">🌊</div>
+      </div>
+      <div class="visual-label">
+        <span class="visual-tag">Intelligence Briefing</span>
+        <span class="visual-date">April 2026</span>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body">
+
+      <div class="kicker">Sneak Peek · Full Briefing Available</div>
+
+      <h1 class="card-title">The State of Artificial Intelligence</h1>
+      <p class="card-sub">A comprehensive read-out across every major AI player — April 2026</p>
+
+      <div class="divider"></div>
+
+      <p class="card-desc">
+        Seven major AI ecosystems. One leadership briefing. Covering the frontier moves
+        from <strong>Anthropic, OpenAI, Google DeepMind, Meta, xAI, Microsoft,</strong>
+        and the cost-disruptor <strong>DeepSeek</strong> — with key themes shaping
+        the infrastructure era every executive needs to understand.
+      </p>
+
+      <!-- Player pills -->
+      <div class="players">
+        <div class="pill"><span>🤖</span> Claude / Opus 4.7</div>
+        <div class="pill"><span>⚡</span> GPT-5.4</div>
+        <div class="pill"><span>💎</span> Gemini 3.1 Pro</div>
+        <div class="pill"><span>🦙</span> Llama 4 Maverick</div>
+        <div class="pill"><span>✕</span> Grok 4.20</div>
+        <div class="pill"><span>🪟</span> Copilot / MAI-1</div>
+        <div class="pill"><span>🌊</span> DeepSeek V3.2</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num">14.5h</div>
+          <div class="stat-label">Task Horizon</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">10M</div>
+          <div class="stat-label">Token Context</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">7×</div>
+          <div class="stat-label">Cost Edge</div>
+        </div>
+      </div>
+
+      <!-- Key themes -->
+      <div class="themes">
+        <div class="theme-item">
+          <span class="theme-icon">🏗️</span>
+          <span class="theme-text"><strong>Infrastructure Era</strong> — Labs ship managed agents & sandboxing, not just models.</span>
+        </div>
+        <div class="theme-item">
+          <span class="theme-icon">🤝</span>
+          <span class="theme-text"><strong>Agentic Work</strong> — AI now completes tasks autonomously over hours, not seconds.</span>
+        </div>
+        <div class="theme-item">
+          <span class="theme-icon">💰</span>
+          <span class="theme-text"><strong>Cost Compression</strong> — $0.28/M tokens vs $15–75/M. Cost is no longer an excuse.</span>
+        </div>
+        <div class="theme-item">
+          <span class="theme-icon">⚠️</span>
+          <span class="theme-text"><strong>Safety Tension</strong> — One model withheld from release. Constitutional AI grows 8×.</span>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-row">
+        <a class="cta-btn" href="https://mohammadgeek-mf.github.io/ai-pages/blog-page/ai-updates-april.html" target="_blank" rel="noopener">
+          Read Full Briefing ◆
+        </a>
+        <span class="cta-hint">7 players · 6 themes · April 21, 2026</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-rule"><div class="footer-diamond"></div></div>
+  <div class="footer-name">Mohammad</div>
+  <div class="footer-role">Senior Principal Architect</div>
+</footer>
+
+<script>
+/* ── STARS ──────────────────────────────────────────────── */
+(function(){
+  const container = document.getElementById('stars');
+  const count = 80;
+  for(let i=0;i<count;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random()*2+1;
+    s.style.cssText = `
+      width:${size}px;height:${size}px;
+      top:${Math.random()*100}%;
+      left:${Math.random()*100}%;
+      --dur:${2.5+Math.random()*5}s;
+      --delay:${Math.random()*6}s;
+      --peak:${.3+Math.random()*.6};
+    `;
+    container.appendChild(s);
+  }
+})();
+
+/* ── THEME TOGGLE ───────────────────────────────────────── */
+const html   = document.documentElement;
+const toggle = document.getElementById('theme-toggle');
+const label  = document.getElementById('mode-label');
+
+function setTheme(t){
+  html.setAttribute('data-theme',t);
+  label.textContent = t==='dark' ? 'Dark' : 'Light';
+  localStorage.setItem('theme',t);
+}
+
+toggle.addEventListener('click',()=>{
+  setTheme(html.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+});
+toggle.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' ')toggle.click();
+});
+
+const saved = localStorage.getItem('theme');
+if(saved) setTheme(saved);
+</script>
+</body>
+</html>
